@@ -1,0 +1,848 @@
+import React, { useState, useEffect, useRef } from 'react';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import styles from './Portfolio.module.css';
+
+// Define types for our data structures
+interface Skill {
+  name: string;
+  percentage: number;
+}
+
+interface ResumeItem {
+  title: string;
+  period: string;
+  company?: string;
+  description?: string;
+  items?: string[];
+}
+
+interface PortfolioItem {
+  id: number;
+  title: string;
+  category: string;
+  imageUrl: string;
+}
+
+interface Service {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+interface Testimonial {
+  text: string;
+  author: string;
+  position: string;
+  company: string;
+  imageUrl: string;
+}
+
+const Portfolio: React.FC = () => {
+  const router = useRouter();
+  // State for active navigation
+  const [activeNav, setActiveNav] = useState<string>('#hero');
+  // State for mobile menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  // Reference for typed.js effect
+  const typedElementRef = useRef<HTMLSpanElement>(null);
+
+  // Skills data
+  const skills: Skill[] = [
+    { name: 'HTML', percentage: 100 },
+    { name: 'CSS / Tailwind', percentage: 95 },
+    { name: 'JavaScript', percentage: 90 },
+    { name: 'jQuery', percentage: 80 },
+    { name: 'TypeScript', percentage: 85 },
+    { name: 'AI/ML', percentage: 85 },
+    { name: 'Python', percentage: 85 },
+    { name: 'C# / .NET Core', percentage: 95 },
+    { name: 'MERN Stack', percentage: 90 },
+    { name: 'Angular', percentage: 90 },
+    { name: 'Java / Spring Boot', percentage: 85 },
+  ];
+
+  // Resume data
+  const employmentHistory: ResumeItem[] = [
+    {
+      title: 'Full Stack Developer',
+      period: '01/2023 – 03/2024',
+      company: 'TACO, Saudi Arabia',
+      items: [
+        'Developed custom ERP (HR/Finance/Inventory) like ERPNext',
+        'Built Angular frontend with .NET Core backend',
+        'Implemented ML for demand forecasting & invoice classification',
+        'Established CI/CD with GitHub Actions & Docker'
+      ]
+    },
+    {
+      title: 'Full Stack Developer',
+      period: '01/2022 – 01/2023',
+      company: 'Dunesberry, Saudi Arabia',
+      items: [
+        'Converted multi-page app to SPA (React), boosting revenue by $1.1M/year',
+        'Built ad-serving platform for 100M users (14% faster)',
+        'Designed and deployed 25+ software systems & 20+ applications'
+      ]
+    },
+    {
+      title: 'UI/UX Developer',
+      period: '01/2021 – 01/2022',
+      company: 'Tasleema, Saudi Arabia',
+      items: [
+        'Built apps with React, Angular, Node.js, .NET',
+        'Delivered React Native apps with 3rd-party service integration',
+        'Developed ML chatbots & recommendation engines',
+        'Optimized CI/CD pipelines for efficient delivery'
+      ]
+    },
+    {
+      title: 'Junior Full Stack Developer',
+      period: '09/2018 – 08/2021',
+      company: 'IMS',
+      items: [
+        'Designed & modified 25+ systems, created 200+ test procedures',
+        'Built 20+ applications (Angular, React, .NET, Spring)'
+      ]
+    }
+  ];
+
+  const education: ResumeItem[] = [
+    {
+      title: 'BSc Physics with Computer Science',
+      period: '2016 - 2018',
+      company: 'Calicut University'
+    },
+    {
+      title: 'AI/ML & MERN Diploma',
+      period: '2021 - 2022',
+      company: 'NIELIT University'
+    },
+    {
+      title: 'Udemy Certifications',
+      description: 'Data Analysis & ML, AI Speech Recognition, E-commerce Web App Development'
+    }
+  ];
+
+  // Portfolio data (simplified for example)
+  const portfolioItems: PortfolioItem[] = [
+    { id: 1, title: 'Logo Design', category: 'filter-logo', imageUrl: '/assets/img/file1.png' },
+    { id: 2, title: 'HealthMate App', category: 'filter-app', imageUrl: '/assets/img/portfolio/app-1.jpg' },
+    { id: 3, title: 'TaskFlow', category: 'filter-app', imageUrl: '/assets/img/portfolio/app-2.jpg' },
+    // Add more items as needed
+  ];
+
+  // Services data
+  const services: Service[] = [
+    {
+      title: 'Advertising',
+      description: 'Creative strategies to boost your brand visibility and connect with your target audience effectively.',
+      icon: 'bi bi-briefcase'
+    },
+    {
+      title: 'Custom Software Development',
+      description: 'Tailored software solutions to meet unique business needs, ensuring scalability and performance.',
+      icon: 'bi bi-card-checklist'
+    },
+    {
+      title: 'Graphic Design',
+      description: 'Visually compelling designs that enhance your brand identity and engage your audience.',
+      icon: 'bi bi-bar-chart'
+    },
+    {
+      title: 'Event Production',
+      description: 'End-to-end planning and execution of unforgettable events that align with your goals and vision.',
+      icon: 'bi bi-binoculars'
+    },
+    {
+      title: 'IT Consulting',
+      description: 'Expert advice to optimize your IT infrastructure and align technology with business objectives.',
+      icon: 'bi bi-brightness-high'
+    },
+    {
+      title: 'Digital Marketing',
+      description: 'Data-driven marketing strategies to grow your online presence and drive customer engagement.',
+      icon: 'bi bi-calendar4-week'
+    }
+  ];
+
+  // Testimonials data
+  const testimonials: Testimonial[] = [
+    {
+      text: 'He exceeded our expectations in every way. From communication to delivery, everything was flawless.',
+      author: 'KSA',
+      position: '',
+      company: 'Dunesberry',
+      imageUrl: '/assets/img/dunesberry.jpg'
+    },
+    {
+      text: 'We couldn\'t be happier with the results. The design was spot on, and the site performance has improved dramatically. Highly recommended!',
+      author: 'KSA',
+      position: '',
+      company: 'Taslima Advertising Agency',
+      imageUrl: '/assets/img/taslima.jpg'
+    },
+    // Add more testimonials
+  ];
+
+  // Handle scroll events to update active navigation
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = document.querySelectorAll('section[id]');
+      let currentSection = '#hero';
+      
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        
+        if (window.scrollY >= sectionTop - 200 && 
+            window.scrollY < sectionTop + sectionHeight - 200) {
+          currentSection = `#${section.id}`;
+        }
+      });
+      
+      setActiveNav(currentSection);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Initialize typed.js effect
+  useEffect(() => {
+    if (typedElementRef.current) {
+      // Simulate typed.js effect with CSS animation
+      typedElementRef.current.classList.add(styles.typingEffect);
+    }
+  }, []);
+
+  // Filter portfolio items by category
+  const [portfolioFilter, setPortfolioFilter] = useState<string>('*');
+  
+  const filteredPortfolioItems = portfolioFilter === '*' 
+    ? portfolioItems 
+    : portfolioItems.filter(item => item.category === portfolioFilter);
+
+  // Handle smooth scrolling for anchor links
+  const handleNavClick = (e: React.MouseEvent, targetId: string) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      window.scrollTo({
+        top: targetElement.offsetTop,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  return (
+    <div className={styles.App}>
+      <Head>
+        <title>Mohammed Rameez - Portfolio</title>
+        <meta name="description" content="Portfolio of Mohammed Rameez - Graphic Designer, Full Stack Developer, and Data Scientist" />
+        <link rel="icon" href="/favicon.ico" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+      </Head>
+
+      {/* Header */}
+      <header id="header" className={`${styles.header} ${styles.darkBackground} d-flex flex-column`}>
+        <i 
+          className={`${styles.headerToggle} d-xl-none bi ${mobileMenuOpen ? 'bi-x' : 'bi-list'}`}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        ></i>
+
+        <div className={styles.profileImg}>
+          <Image 
+            src="/assets/img/my-profile-img.jpg" 
+            alt="Mohammed Rameez" 
+            width={150} 
+            height={150} 
+            className="img-fluid rounded-circle" 
+          />
+        </div>
+
+        <Link href="/" className={`${styles.logo} d-flex align-items-center justify-content-center`}>
+          <h1 className={styles.sitename}>Mohammed Rameez</h1>
+        </Link>
+
+        <div className={styles.socialLinks}>
+          <a href="https://twitter.com/mrmzqa" className="twitter"><i className="bi bi-twitter-x"></i></a>
+          <a href="https://facebook.com/mrmzqa" className="facebook"><i className="bi bi-facebook"></i></a>
+          <a href="https://instagram.com/mrmzqa" className="instagram"><i className="bi bi-instagram"></i></a>
+          <a href="https://linkedin.com/in/mrmzqa" className="linkedin"><i className="bi bi-linkedin"></i></a>
+          <a href="https://twitch.com/mrmzqa" className="twitch"><i className="bi bi-twitch"></i></a>
+        </div>
+
+        <nav id="navmenu" className={`${styles.navmenu} ${mobileMenuOpen ? styles.mobileNavActive : ''}`}>
+          <ul>
+            <li>
+              <a 
+                href="#hero" 
+                className={activeNav === '#hero' ? styles.active : ''}
+                onClick={(e) => handleNavClick(e, '#hero')}
+              >
+                <i className="bi bi-house navicon"></i>Home
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#about" 
+                className={activeNav === '#about' ? styles.active : ''}
+                onClick={(e) => handleNavClick(e, '#about')}
+              >
+                <i className="bi bi-person navicon"></i> About
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#resume" 
+                className={activeNav === '#resume' ? styles.active : ''}
+                onClick={(e) => handleNavClick(e, '#resume')}
+              >
+                <i className="bi bi-file-earmark-text navicon"></i> Resume
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#portfolio" 
+                className={activeNav === '#portfolio' ? styles.active : ''}
+                onClick={(e) => handleNavClick(e, '#portfolio')}
+              >
+                <i className="bi bi-images navicon"></i> Portfolio
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#services" 
+                className={activeNav === '#services' ? styles.active : ''}
+                onClick={(e) => handleNavClick(e, '#services')}
+              >
+                <i className="bi bi-hdd-stack navicon"></i> Services
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#contact" 
+                className={activeNav === '#contact' ? styles.active : ''}
+                onClick={(e) => handleNavClick(e, '#contact')}
+              >
+                <i className="bi bi-envelope navicon"></i> Contact
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      <main className={styles.main}>
+        {/* Hero Section */}
+        <section id="hero" className={`${styles.hero} ${styles.section} ${styles.darkBackground}`}>
+          <div className={styles.heroBg}>
+            <Image 
+              src="/assets/img/hero-bg.jpg" 
+              alt="Background" 
+              fill
+              style={{ objectFit: 'cover' }}
+              priority
+            />
+          </div>
+          
+          <div className="container" data-aos="fade-up" data-aos-delay="100">
+            <h2>Mohammed Rameez</h2>
+            <p>
+              I'm <span className={styles.typed} ref={typedElementRef} data-typed-items="Graphic Designer, Software Developer, Data Scientist">
+                Full Stack Developer
+              </span>
+              <span className={`${styles.typedCursor} ${styles.typedCursorBlink}`} aria-hidden="true"></span>
+            </p>
+          </div>
+        </section>
+
+        {/* About Section */}
+        <section id="about" className={`${styles.about} ${styles.section}`}>
+          <div className={`container ${styles.sectionTitle}`} data-aos="fade-up">
+            <h2>About</h2>
+            <p>
+              I'm a multi-disciplinary professional offering a unique blend of advertising, business consulting, 
+              software development, architecture consulting, and graphic design — all focused on driving real, measurable results.
+            </p>
+          </div>
+
+          <div className="container" data-aos="fade-up" data-aos-delay="100">
+            <div className="row gy-4 justify-content-center">
+              <div className="col-lg-4">
+                <Image 
+                  src="/assets/img/my-profile-img.jpg" 
+                  width={400} 
+                  height={400} 
+                  className="img-fluid" 
+                  alt="Mohammed Rameez" 
+                />
+              </div>
+              <div className="col-lg-8 content">
+                <h2>Graphic Designer | Full Stack Developer | Data Scientist</h2>
+                <p className="fst-italic py-3">
+                  I can offer wide range of services to elevate your business: Advertising for brand awareness, 
+                  Custom Software Development, Graphic Design, Event Production, Architecture, IT Consulting, 
+                  Digital Marketing, Outsourcing, Video Production, and Video Animation. All tailored to meet 
+                  your unique needs and drive success.
+                </p>
+                <div className="row">
+                  <div className="col-lg-6">
+                    <ul>
+                      <li><i className="bi bi-chevron-right"></i> <strong>Phone:</strong> <span>+974 71713634</span></li>
+                      <li><i className="bi bi-chevron-right"></i> <strong>City:</strong> <span>Qatar, Doha</span></li>
+                    </ul>
+                  </div>
+                  <div className="col-lg-6">
+                    <ul>
+                      <li><i className="bi bi-chevron-right"></i> <strong>Email:</strong> <span>mrmzqa@gmail.com</span></li>
+                      <li><i className="bi bi-chevron-right"></i> <strong>Freelance:</strong> <span>Available</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Stats Section */}
+        <section id="stats" className={`${styles.stats} ${styles.section}`}>
+          <div className="container" data-aos="fade-up" data-aos-delay="100">
+            <div className="row gy-4">
+              <div className="col-lg-3 col-md-6">
+                <div className={styles.statsItem}>
+                  <i className="bi bi-emoji-smile"></i>
+                  <span data-purecounter-start="0" data-purecounter-end="232" data-purecounter-duration="1" className="purecounter">232</span>
+                  <p><strong>Happy Clients</strong></p>
+                </div>
+              </div>
+              
+              <div className="col-lg-3 col-md-6">
+                <div className={styles.statsItem}>
+                  <i className="bi bi-journal-richtext"></i>
+                  <span data-purecounter-start="0" data-purecounter-end="80" data-purecounter-duration="1" className="purecounter">80</span>
+                  <p><strong>Projects</strong></p>
+                </div>
+              </div>
+              
+              <div className="col-lg-3 col-md-6">
+                <div className={styles.statsItem}>
+                  <i className="bi bi-headset"></i>
+                  <span data-purecounter-start="0" data-purecounter-end="1453" data-purecounter-duration="1" className="purecounter">1453</span>
+                  <p><strong>Hours Of Support</strong></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Skills Section */}
+        <section id="skills" className={`${styles.skills} ${styles.section} ${styles.lightBackground}`}>
+          <div className={`container ${styles.sectionTitle}`} data-aos="fade-up">
+            <h2>Skills</h2>
+            <p>Technical expertise across programming, frameworks, and modern technologies.</p>
+          </div>
+
+          <div className="container" data-aos="fade-up" data-aos-delay="100">
+            <div className={`row ${styles.skillsContent} ${styles.skillsAnimation}`}>
+              <div className="col-lg-6">
+                {skills.slice(0, 6).map((skill, index) => (
+                  <div className={styles.progress} key={index}>
+                    <span className={styles.skill}>
+                      {skill.name} <i className="val">{skill.percentage}%</i>
+                    </span>
+                    <div className={styles.progressBarWrap}>
+                      <div 
+                        className={styles.progressBar} 
+                        role="progressbar" 
+                        style={{ width: `${skill.percentage}%` }}
+                        aria-valuenow={skill.percentage} 
+                        aria-valuemin={0} 
+                        aria-valuemax={100}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="col-lg-6">
+                {skills.slice(6).map((skill, index) => (
+                  <div className={styles.progress} key={index}>
+                    <span className={styles.skill}>
+                      {skill.name} <i className="val">{skill.percentage}%</i>
+                    </span>
+                    <div className={styles.progressBarWrap}>
+                      <div 
+                        className={styles.progressBar} 
+                        role="progressbar" 
+                        style={{ width: `${skill.percentage}%` }}
+                        aria-valuenow={skill.percentage} 
+                        aria-valuemin={0} 
+                        aria-valuemax={100}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Resume Section */}
+        <section id="resume" className={`${styles.resume} ${styles.section}`}>
+          <div className={`container ${styles.sectionTitle}`} data-aos="fade-up">
+            <h2>Resume</h2>
+            <p>
+              Full Stack Developer experienced in AI/ML, ERP, scalable web applications, and software development. 
+              Skilled in delivering innovative solutions that enhance business performance.
+            </p>
+          </div>
+
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                <h3 className={styles.resumeTitle}>Profile</h3>
+                <div className={styles.resumeItem}>
+                  <h4>Mohammed Rameez</h4>
+                  <p>
+                    <em>
+                      Passionate and experienced Full Stack Developer & Event Planner. Adept at planning, coordinating, 
+                      and overseeing events, as well as developing scalable applications. Strong background in AI/ML, 
+                      software design, and ERP systems.
+                    </em>
+                  </p>
+                  <ul>
+                    <li>Doha, Qatar</li>
+                    <li>+974 71713634</li>
+                    <li>mrmzqa@gmail.com</li>
+                    <li>
+                      <a href="https://github.com/mrmzqa">GitHub</a> | 
+                      <a href="https://www.linkedin.com/in/mohammed-r-a35799229">LinkedIn</a>
+                    </li>
+                  </ul>
+                </div>
+
+                <h3 className={styles.resumeTitle}>Education</h3>
+                {education.map((edu, index) => (
+                  <div className={styles.resumeItem} key={index}>
+                    <h4>{edu.title}</h4>
+                    {edu.period && <h5>{edu.period}</h5>}
+                    {edu.company && <p><em>{edu.company}</em></p>}
+                    {edu.description && <p>{edu.description}</p>}
+                  </div>
+                ))}
+
+                <h3 className={styles.resumeTitle}>Soft Skills</h3>
+                <ul>
+                  <li>Organized & Efficient: Strong time management</li>
+                  <li>Continuous Learner: Adapts to new tech quickly</li>
+                  <li>Leadership: Mentored junior developers</li>
+                  <li>Agile Practitioner: Certified Scrum Master</li>
+                  <li>Problem-Solver: Strong troubleshooting & innovation</li>
+                </ul>
+
+                <h3 className={styles.resumeTitle}>Languages</h3>
+                <ul>
+                  <li>English, Malayalam, Hindi: ●●●●●</li>
+                  <li>Arabic, German: ●●○○○</li>
+                </ul>
+              </div>
+
+              <div className="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                <h3 className={styles.resumeTitle}>Employment History</h3>
+                {employmentHistory.map((job, index) => (
+                  <div className={styles.resumeItem} key={index}>
+                    <h4>{job.title}</h4>
+                    <h5>{job.period}</h5>
+                    {job.company && <p><em>{job.company}</em></p>}
+                    {job.items && (
+                      <ul>
+                        {job.items.map((item, i) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+
+                <h3 className={styles.resumeTitle}>Technical Skills</h3>
+                <ul>
+                  <li><strong>Programming:</strong> C#, C++, JavaScript, TypeScript, Python, SQL/NoSQL</li>
+                  <li><strong>Frameworks:</strong> ASP.NET Core (6,7,8,9), Blazor, MVC, Razor Pages, React.js, Angular.js, Node.js, Spring Boot</li>
+                  <li><strong>AI/Data:</strong> NumPy, Pandas, Matplotlib, Scikit-learn, NLP</li>
+                  <li><strong>Databases & Cloud:</strong> MongoDB, Redis, Firebase, SQL Server</li>
+                  <li><strong>Tools:</strong> Visual Studio, VS Code, PyCharm, Eclipse, GitHub, Docker</li>
+                  <li><strong>Design:</strong> Figma, Adobe Suite, Corel</li>
+                </ul>
+
+                <h3 className={styles.resumeTitle}>Recent Projects</h3>
+                <div className={styles.resumeItem}>
+                  <h4>E-commerce Web App</h4>
+                  <p>Technologies: .NET 8, Angular, Spring Boot, Redis, MongoDB, RabbitMQ, gRPC. Improved response time by 30% with Redis caching.</p>
+                </div>
+                <div className={styles.resumeItem}>
+                  <h4>AI Speech Recognition</h4>
+                  <p>Built speech-to-text system with 90%+ accuracy, clustering models for accent recognition.</p>
+                </div>
+                <div className={styles.resumeItem}>
+                  <h4>Data Analysis & ML Models</h4>
+                  <p>Predictive analytics for decision-making, achieved 15% efficiency boost with insights.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Portfolio Section */}
+        <section id="portfolio" className={`${styles.portfolio} ${styles.section} ${styles.lightBackground}`}>
+          <div className={`container ${styles.sectionTitle}`} data-aos="fade-up">
+            <h2>Portfolio</h2>
+            <p>
+              Explore a curated selection of our latest projects, showcasing innovative designs, cutting-edge apps, 
+              compelling branding, and expertly crafted publications. Each piece reflects our commitment to quality, 
+              creativity, and client satisfaction.
+            </p>
+          </div>
+
+          <div className="container">
+            <div className={styles.isotopeLayout} data-default-filter="*" data-layout="masonry" data-sort="original-order">
+              <ul className={styles.portfolioFilters} data-aos="fade-up" data-aos-delay="100">
+                <li 
+                  className={portfolioFilter === '*' ? styles.filterActive : ''}
+                  onClick={() => setPortfolioFilter('*')}
+                >
+                  All
+                </li>
+                <li 
+                  className={portfolioFilter === 'filter-product' ? styles.filterActive : ''}
+                  onClick={() => setPortfolioFilter('filter-product')}
+                >
+                  Product
+                </li>
+                <li 
+                  className={portfolioFilter === 'filter-branding' ? styles.filterActive : ''}
+                  onClick={() => setPortfolioFilter('filter-branding')}
+                >
+                  Branding
+                </li>
+                <li 
+                  className={portfolioFilter === 'filter-logo' ? styles.filterActive : ''}
+                  onClick={() => setPortfolioFilter('filter-logo')}
+                >
+                  Logofolio
+                </li>
+              </ul>
+
+              <div className={`row gy-4 ${styles.isotopeContainer}`} data-aos="fade-up" data-aos-delay="200">
+                {filteredPortfolioItems.map(item => (
+                  <div key={item.id} className={`col-lg-4 col-md-6 portfolio-item ${styles.isotopeItem}`}>
+                    <div className={`${styles.portfolioContent} h-100`}>
+                      <Image 
+                        src={item.imageUrl} 
+                        width={400} 
+                        height={300} 
+                        className="img-fluid" 
+                        alt={item.title} 
+                      />
+                      <div className={styles.portfolioInfo}>
+                        <a 
+                          href={item.imageUrl} 
+                          data-gallery="portfolio-gallery-app" 
+                          className={`glightbox ${styles.previewLink}`}
+                        >
+                          <i className="bi bi-zoom-in"></i>
+                        </a>
+                        <a href="" title="More Details" className={styles.detailsLink}>
+                          <i className="bi bi-link-45deg"></i>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Section */}
+        <section id="services" className={`${styles.services} ${styles.section}`}>
+          <div className={`container ${styles.sectionTitle}`} data-aos="fade-up">
+            <h2>Services</h2>
+            <p>
+              Advertising for brand awareness, Custom Software Development, Graphic Design, Event Production, 
+              Architecture, IT Consulting, Digital Marketing, Outsourcing, Video Production, and Video Animation. 
+              All tailored to meet your unique needs and drive success.
+            </p>
+          </div>
+
+          <div className="container">
+            <div className="row gy-4">
+              {services.map((service, index) => (
+                <div 
+                  key={index} 
+                  className={`col-lg-4 col-md-6 ${styles.serviceItem} d-flex`} 
+                  data-aos="fade-up" 
+                  data-aos-delay={100 * (index + 1)}
+                >
+                  <div className={styles.icon}>
+                    <i className={service.icon}></i>
+                  </div>
+                  <div>
+                    <h4 className={styles.title}>
+                      <a href="" className="stretched-link">{service.title}</a>
+                    </h4>
+                    <p className={styles.description}>{service.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section id="testimonials" className={`${styles.testimonials} ${styles.section} ${styles.lightBackground}`}>
+          <div className={`container ${styles.sectionTitle}`} data-aos="fade-up">
+            <h2>Testimonials</h2>
+            <p>
+              See what our satisfied clients have to say about their experience working with us. 
+              Real stories, real results.
+            </p>
+          </div>
+
+          <div className="container" data-aos="fade-up" data-aos-delay="100">
+            <div className={styles.testimonialsSlider}>
+              <div className={styles.swiperWrapper}>
+                {testimonials.map((testimonial, index) => (
+                  <div className={styles.swiperSlide} key={index}>
+                    <div className={styles.testimonialItem}>
+                      <p>
+                        <i className="bi bi-quote quote-icon-left"></i>
+                        {testimonial.text}
+                        <i className="bi bi-quote quote-icon-right"></i>
+                      </p>
+                      <Image 
+                        src={testimonial.imageUrl} 
+                        width={100} 
+                        height={100} 
+                        className={styles.testimonialImg} 
+                        alt={testimonial.author} 
+                      />
+                      <h3>{testimonial.author}</h3>
+                      <h4>{testimonial.company}</h4>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className={styles.swiperPagination}></div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section id="contact" className={`${styles.contact} ${styles.section}`}>
+          <div className={`container ${styles.sectionTitle}`} data-aos="fade-up">
+            <h2>Contact</h2>
+          </div>
+
+          <div className="container" data-aos="fade-up" data-aos-delay="100">
+            <div className="row gy-4">
+              <div className="col-lg-5">
+                <div className={styles.infoWrap}>
+                  <div className={`${styles.infoItem} d-flex`} data-aos="fade-up" data-aos-delay="200">
+                    <i className="bi bi-geo-alt flex-shrink-0"></i>
+                    <div>
+                      <h3>Address</h3>
+                      <p>Doha, Qatar</p>
+                    </div>
+                  </div>
+
+                  <div className={`${styles.infoItem} d-flex`} data-aos="fade-up" data-aos-delay="300">
+                    <i className="bi bi-telephone flex-shrink-0"></i>
+                    <div>
+                      <h3>Call</h3>
+                      <p>+974 71713634</p>
+                    </div>
+                  </div>
+
+                  <div className={`${styles.infoItem} d-flex`} data-aos="fade-up" data-aos-delay="400">
+                    <i className="bi bi-envelope flex-shrink-0"></i>
+                    <div>
+                      <h3>Email</h3>
+                      <p>mrmzqa@gmail.com</p>
+                    </div>
+                  </div>
+
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d89534.39422837466!2d51.464451477220614!3d25.284268429688876!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e45c534ffdce87f%3A0x44d9319f78cfd4b1!2sDoha!5e0!3m2!1sen!2sqa!4v1756219647238!5m2!1sen!2sqa" 
+                    frameBorder="0" 
+                    style={{ border: 0, width: '100%', height: '270px' }} 
+                    allowFullScreen 
+                    loading="lazy" 
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Location Map"
+                  ></iframe>
+                </div>
+              </div>
+
+              <div className="col-lg-7">
+                <form className={styles.phpEmailForm} data-aos="fade-up" data-aos-delay="200">
+                  <div className="row gy-4">
+                    <div className="col-md-6">
+                      <label htmlFor="name" className="pb-2">Your Name</label>
+                      <input type="text" name="name" id="name" className="form-control" required />
+                    </div>
+
+                    <div className="col-md-6">
+                      <label htmlFor="email" className="pb-2">Your Email</label>
+                      <input type="email" className="form-control" name="email" id="email" required />
+                    </div>
+
+                    <div className="col-md-12">
+                      <label htmlFor="subject" className="pb-2">Subject</label>
+                      <input type="text" className="form-control" name="subject" id="subject" required />
+                    </div>
+
+                    <div className="col-md-12">
+                      <label htmlFor="message" className="pb-2">Message</label>
+                      <textarea className="form-control" name="message" rows={10} id="message" required></textarea>
+                    </div>
+
+                    <div className="col-md-12 text-center">
+                      <div className={styles.loading}>Loading</div>
+                      <div className={styles.errorMessage}></div>
+                      <div className={styles.sentMessage}>Your message has been sent. Thank you!</div>
+
+                      <button type="submit">Send Message</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer id="footer" className={`${styles.footer} position-relative ${styles.lightBackground}`}>
+        <div className="container">
+          <div className="copyright text-center">
+            <p>© <span>Copyright</span> <strong className="px-1 sitename">Portfolio</strong> <span>All Rights Reserved</span></p>
+          </div>
+          <div className={styles.credits}>
+            Distributed by <a href="https://mrmzqa.github.io">mrmzqa</a>
+          </div>
+        </div>
+      </footer>
+
+      {/* Scroll Top Button */}
+      <a href="#" id={styles.scrollTop} className={`${styles.scrollTop} d-flex align-items-center justify-content-center`}>
+        <i className="bi bi-arrow-up-short"></i>
+      </a>
+    </div>
+  );
+};
+
+export default Portfolio;
