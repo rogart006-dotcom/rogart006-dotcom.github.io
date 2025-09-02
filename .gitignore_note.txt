@@ -1,0 +1,9 @@
+Recommended .gitignore content to create locally:
+
+node_modules
+/frontend/out
+/backend/data/*.db
+.env.local
+.env
+npm-debug.log
+.DS_Store
