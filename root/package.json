@@ -1,0 +1,14 @@
+{
+  "name": "animated-portfolio-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm run dev",
+    "start:all": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "lint": "echo \"No lint configured\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
